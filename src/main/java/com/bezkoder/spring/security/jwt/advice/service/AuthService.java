@@ -1,3 +1,4 @@
+// Update AuthService.java
 package com.bezkoder.spring.security.jwt.security.services;
 
 import com.bezkoder.spring.security.jwt.exception.BusinessNotFoundException;
@@ -7,6 +8,7 @@ import com.bezkoder.spring.security.jwt.payload.request.LoginRequest;
 import com.bezkoder.spring.security.jwt.payload.request.SignupRequest;
 import com.bezkoder.spring.security.jwt.payload.response.MessageResponse;
 import com.bezkoder.spring.security.jwt.payload.response.UserInfoResponse;
+import com.bezkoder.spring.security.jwt.repository.ActionLogRepository;
 import com.bezkoder.spring.security.jwt.repository.BusinessRepository;
 import com.bezkoder.spring.security.jwt.repository.RoleRepository;
 import com.bezkoder.spring.security.jwt.repository.UserRepository;
@@ -23,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +54,18 @@ public class AuthService {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private ActionLogRepository actionLogRepository;
+
+    private void logAction(String username, String action, String requestInfo) {
+        ActionLog log = new ActionLog();
+        log.setUsername(username);
+        log.setAction(action);
+        log.setTimestamp(LocalDateTime.now());
+        log.setRequestInfo(requestInfo);
+        actionLogRepository.save(log);
+    }
+
     public ResponseEntity<?> authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -65,6 +80,9 @@ public class AuthService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        logAction(loginRequest.getUsername(), "Sign In", "Username: " + loggedInUsername);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -87,11 +105,9 @@ public class AuthService {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Ensure business exists before allowing registration
         Business business = businessRepository.findById(signUpRequest.getBusinessId())
                 .orElseThrow(() -> new BusinessNotFoundException("Business ID: " + signUpRequest.getBusinessId()));
 
-        // Create new user
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
@@ -103,6 +119,9 @@ public class AuthService {
 
         user.setRoles(roles);
         userRepository.save(user);
+
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        logAction(loggedInUsername, "Account Creation", "Username: " + signUpRequest.getUsername() + ", Email: " + signUpRequest.getEmail());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
@@ -124,6 +143,7 @@ public class AuthService {
         if (!principal.toString().equals("anonymousUser")) {
             Long userId = ((UserDetailsImpl) principal).getId();
             refreshTokenService.deleteByUserId(userId);
+            logAction(((UserDetailsImpl) principal).getUsername(), "Sign Out", "User signed out");
         }
 
         ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
