@@ -1,7 +1,7 @@
-package com.bezkoder.spring.security.jwt.repository.inventory;
+package com.bezkoder.spring.inventory.repository;
 
 import com.bezkoder.spring.security.jwt.models.Business;
-import com.bezkoder.spring.security.jwt.models.inventory.ItemType;
+import com.bezkoder.spring.inventory.model.ItemType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,15 +1,13 @@
-package com.bezkoder.spring.security.jwt.advice.service.inventory;
-
+package com.bezkoder.spring.inventory.service;
 
 import com.bezkoder.spring.security.jwt.models.User;
-import com.bezkoder.spring.security.jwt.models.inventory.Item;
-import com.bezkoder.spring.security.jwt.models.inventory.ItemType;
-import com.bezkoder.spring.security.jwt.payload.request.inventory.ItemRequestDto;
-import com.bezkoder.spring.security.jwt.payload.response.inventory.ItemResponseDto;
+import com.bezkoder.spring.inventory.model.Item;
+import com.bezkoder.spring.inventory.model.ItemType;
+import com.bezkoder.spring.inventory.dto.request.ItemRequestDto;
+import com.bezkoder.spring.inventory.dto.response.ItemResponseDto;
 import com.bezkoder.spring.security.jwt.repository.UserRepository;
-import com.bezkoder.spring.security.jwt.repository.inventory.ItemRepository;
-import com.bezkoder.spring.security.jwt.repository.inventory.ItemTypeRepository;
-import com.bezkoder.spring.security.jwt.security.services.UserDetailsImpl;
+import com.bezkoder.spring.inventory.repository.ItemRepository;
+import com.bezkoder.spring.inventory.repository.ItemTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -30,7 +28,7 @@ public class ItemService {
     public ItemResponseDto createItem(ItemRequestDto dto) {
         Long businessId = getCurrentBusinessId();
 
-        ItemType type = itemTypeRepository.findById(dto.getTypeId())
+        ItemType type = itemTypeRepository.findById(dto.typeId())
                 .orElseThrow(() -> new EntityNotFoundException("ItemType not found"));
 
         if (!type.getBusiness().getId().equals(businessId)) {
@@ -38,8 +36,8 @@ public class ItemService {
         }
 
         Item item = Item.builder()
-                .name(dto.getName())
-                .description(dto.getDescription())
+                .name(dto.name())
+                .description(dto.description())
                 .type(type)
                 .businessId(businessId)
                 .build();
@@ -68,17 +66,17 @@ public class ItemService {
     }
 
     public ItemResponseDto updateItem(Long id, ItemRequestDto dto) {
-        Item existing = getItemByIdEntity(id); // reuse check
+        Item existing = getItemByIdEntity(id);
 
-        ItemType type = itemTypeRepository.findById(dto.getTypeId())
+        ItemType type = itemTypeRepository.findById(dto.typeId())
                 .orElseThrow(() -> new EntityNotFoundException("ItemType not found"));
 
         if (!type.getBusiness().getId().equals(getCurrentBusinessId())) {
             throw new SecurityException("Invalid type for this business");
         }
 
-        existing.setName(dto.getName());
-        existing.setDescription(dto.getDescription());
+        existing.setName(dto.name());
+        existing.setDescription(dto.description());
         existing.setType(type);
 
         Item saved = itemRepository.save(existing);
@@ -90,15 +88,13 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
-    // --- Helpers ---
-
     private ItemResponseDto toDto(Item item) {
-        ItemResponseDto dto = new ItemResponseDto();
-        dto.setId(item.getId());
-        dto.setName(item.getName());
-        dto.setDescription(item.getDescription());
-        dto.setTypeDescription(item.getType().getDescription());
-        return dto;
+        return new ItemResponseDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getType().getDescription()
+        );
     }
 
     private Item getItemByIdEntity(Long id) {

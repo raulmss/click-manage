@@ -1,4 +1,4 @@
-package com.bezkoder.spring.security.jwt.models.inventory;
+package com.bezkoder.spring.inventory.model;
 
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -1,12 +1,10 @@
 package com.bezkoder.spring.security.jwt.advice.service;
 
-import com.bezkoder.spring.security.jwt.exception.BusinessNotFoundException;
+import com.bezkoder.spring.inventory.exception.BusinessNotFoundException;
 import com.bezkoder.spring.security.jwt.exception.TokenRefreshException;
 import com.bezkoder.spring.security.jwt.models.*;
 import com.bezkoder.spring.security.jwt.payload.request.LoginRequest;
 import com.bezkoder.spring.security.jwt.payload.request.SignupRequest;
-import com.bezkoder.spring.security.jwt.payload.response.MessageResponse;
-import com.bezkoder.spring.security.jwt.payload.response.UserInfoResponse;
 import com.bezkoder.spring.security.jwt.repository.ActionLogRepository;
 import com.bezkoder.spring.security.jwt.repository.BusinessRepository;
 import com.bezkoder.spring.security.jwt.repository.RoleRepository;

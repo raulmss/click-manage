@@ -1,4 +1,4 @@
-package com.bezkoder.spring.security.jwt.exception;
+package com.bezkoder.spring.inventory.exception;
 
 public class BusinessNotFoundException extends RuntimeException {
     public BusinessNotFoundException(String businessName) {

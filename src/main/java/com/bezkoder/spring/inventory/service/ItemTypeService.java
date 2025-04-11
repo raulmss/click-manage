@@ -1,14 +1,13 @@
-package com.bezkoder.spring.security.jwt.advice.service.inventory;
-
+package com.bezkoder.spring.inventory.service;
 
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.security.jwt.models.User;
-import com.bezkoder.spring.security.jwt.models.inventory.ItemType;
-import com.bezkoder.spring.security.jwt.payload.request.inventory.ItemTypeRequestDto;
-import com.bezkoder.spring.security.jwt.payload.response.inventory.ItemTypeResponseDto;
+import com.bezkoder.spring.inventory.model.ItemType;
+import com.bezkoder.spring.inventory.dto.request.ItemTypeRequestDto;
+import com.bezkoder.spring.inventory.dto.response.ItemTypeResponseDto;
 import com.bezkoder.spring.security.jwt.repository.BusinessRepository;
 import com.bezkoder.spring.security.jwt.repository.UserRepository;
-import com.bezkoder.spring.security.jwt.repository.inventory.ItemTypeRepository;
+import com.bezkoder.spring.inventory.repository.ItemTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -25,11 +24,12 @@ public class ItemTypeService {
     private final ItemTypeRepository itemTypeRepository;
     private final BusinessRepository businessRepository;
     private final UserRepository userRepository;
+
     public ItemTypeResponseDto createType(ItemTypeRequestDto dto) {
         Business business = getCurrentBusiness();
 
         ItemType type = ItemType.builder()
-                .description(dto.getDescription())
+                .description(dto.description())
                 .business(business)
                 .build();
 
@@ -56,10 +56,7 @@ public class ItemTypeService {
     }
 
     private ItemTypeResponseDto toDto(ItemType type) {
-        return ItemTypeResponseDto.builder()
-                .id(type.getId())
-                .description(type.getDescription())
-                .build();
+        return new ItemTypeResponseDto(type.getId(), type.getDescription());
     }
 
     private Business getCurrentBusiness() {
@@ -69,5 +66,4 @@ public class ItemTypeService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         return user.getBusiness();
     }
-
 }

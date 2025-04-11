@@ -1,9 +1,9 @@
-package com.bezkoder.spring.security.jwt.controllers.inventory;
+package com.bezkoder.spring.inventory.controller;
 
 
-import com.bezkoder.spring.security.jwt.advice.service.inventory.ItemTypeService;
-import com.bezkoder.spring.security.jwt.payload.request.inventory.ItemTypeRequestDto;
-import com.bezkoder.spring.security.jwt.payload.response.inventory.ItemTypeResponseDto;
+import com.bezkoder.spring.inventory.service.ItemTypeService;
+import com.bezkoder.spring.inventory.dto.request.ItemTypeRequestDto;
+import com.bezkoder.spring.inventory.dto.response.ItemTypeResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
