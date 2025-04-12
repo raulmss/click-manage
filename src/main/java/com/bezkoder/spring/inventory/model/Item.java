@@ -1,6 +1,5 @@
 package com.bezkoder.spring.inventory.model;
 
-import com.bezkoder.spring.security.jwt.models.Business;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,9 +24,6 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "type_id")
     private ItemType type;
-
-    @Column(nullable = false)
-    private Long businessId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id", nullable = false)

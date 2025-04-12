@@ -93,9 +93,10 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                           "/swagger-ui/**",   // Swagger UI
                           "/swagger-ui.html"  // Legacy Swagger UI path
                   ).permitAll()
-              .requestMatchers("/api/auth/**").permitAll()
-              .requestMatchers("/api/test/**").permitAll()
-              .anyRequest().authenticated()
+                  .anyRequest().permitAll()
+//              .requestMatchers("/api/auth/**").permitAll()
+//              .requestMatchers("/api/test/**").permitAll()
+//              .anyRequest().authenticated()
         );
         
     http.authenticationProvider(authenticationProvider());

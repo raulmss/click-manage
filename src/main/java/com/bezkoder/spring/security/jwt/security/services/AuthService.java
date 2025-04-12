@@ -2,6 +2,7 @@
 package com.bezkoder.spring.security.jwt.security.services;
 
 import com.bezkoder.spring.inventory.exception.BusinessNotFoundException;
+import com.bezkoder.spring.inventory.model.Business;
 import com.bezkoder.spring.security.jwt.exception.TokenRefreshException;
 import com.bezkoder.spring.security.jwt.models.*;
 import com.bezkoder.spring.security.jwt.payload.request.LoginRequest;

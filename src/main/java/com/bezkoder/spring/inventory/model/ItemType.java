@@ -1,6 +1,5 @@
 package com.bezkoder.spring.inventory.model;
 
-import com.bezkoder.spring.security.jwt.models.Business;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,6 +15,8 @@ public class ItemType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
 
     @Column(nullable = false)
     private String description;
