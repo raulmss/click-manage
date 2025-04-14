@@ -3,7 +3,7 @@ package com.bezkoder.spring.inventory.service;
 import com.bezkoder.spring.inventory.dto.request.ItemRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemResponseDto;
 import com.bezkoder.spring.inventory.mapper.ItemMapper;
-import com.bezkoder.spring.inventory.model.Business;
+import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.inventory.model.Item;
 import com.bezkoder.spring.inventory.model.ItemType;
 import com.bezkoder.spring.inventory.repository.ItemRepository;
@@ -33,7 +33,6 @@ public class ItemService {
 
         Item item = itemMapper.itemRequestDtoToItem(dto);
         item.setType(type);
-        item.setBusiness(business);
 
         return itemMapper.itemToItemResponseDto(itemRepository.save(item));
     }
@@ -41,7 +40,7 @@ public class ItemService {
     public List<ItemResponseDto> getAllItems() {
         Business business = businessContextService.getCurrentBusiness();
 
-        return itemRepository.findByBusiness(business)
+        return itemRepository.findByType_Business(business)
                 .stream()
                 .map(itemMapper::itemToItemResponseDto)
                 .toList();
@@ -79,7 +78,7 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Item not found"));
 
-        if (!item.getBusiness().getId().equals(business.getId())) {
+        if (!item.getType().getBusiness().getId().equals(business.getId())) {
             throw new SecurityException("Access denied to this item.");
         }
 

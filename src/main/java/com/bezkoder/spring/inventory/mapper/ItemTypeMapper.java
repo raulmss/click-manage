@@ -3,16 +3,38 @@ package com.bezkoder.spring.inventory.mapper;
 import com.bezkoder.spring.inventory.dto.request.ItemTypeRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemTypeResponseDto;
 import com.bezkoder.spring.inventory.model.ItemType;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import com.bezkoder.spring.security.jwt.mapper.BusinessMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = BusinessMapper.class)
-public interface ItemTypeMapper {
+@Component
+@RequiredArgsConstructor
+public class ItemTypeMapper {
 
-    @Mapping(source = "businessRequestDto", target = "business")
-    ItemType itemTypeRequestDtoToItemType(ItemTypeRequestDto dto);
+    private final BusinessMapper businessMapper;
 
-    @Mapping(source = "business", target = "businessResponseDto")
-    ItemTypeResponseDto itemTypeToItemTypeResponseDto(ItemType itemType);
+    public ItemType itemTypeRequestDtoToItemType(ItemTypeRequestDto dto) {
+        if (dto == null) return null;
+
+        ItemType itemType = new ItemType();
+        itemType.setName(dto.name());
+        itemType.setDescription(dto.description());
+
+        if (dto.businessRequestDto() != null) {
+            itemType.setBusiness(businessMapper.businessRequestDtoToBusiness(dto.businessRequestDto()));
+        }
+
+        return itemType;
+    }
+
+    public ItemTypeResponseDto itemTypeToItemTypeResponseDto(ItemType itemType) {
+        if (itemType == null) return null;
+
+        return new ItemTypeResponseDto(
+                itemType.getId(),
+                itemType.getName(),
+                itemType.getDescription(),
+                businessMapper.businessToBusinessResponseDto(itemType.getBusiness())
+        );
+    }
 }

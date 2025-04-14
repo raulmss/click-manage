@@ -3,7 +3,6 @@ package com.bezkoder.spring.security.jwt.models;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.bezkoder.spring.inventory.model.Business;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

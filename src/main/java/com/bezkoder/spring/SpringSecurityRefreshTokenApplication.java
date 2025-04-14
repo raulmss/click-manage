@@ -1,9 +1,12 @@
-package com.bezkoder.spring.security.jwt;
+package com.bezkoder.spring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+		"com.bezkoder.spring.security",
+		"com.bezkoder.spring.inventory"
+})
 public class SpringSecurityRefreshTokenApplication {
 
 	public static void main(String[] args) {

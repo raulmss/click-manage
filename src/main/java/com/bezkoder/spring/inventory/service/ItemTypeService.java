@@ -3,7 +3,7 @@ package com.bezkoder.spring.inventory.service;
 import com.bezkoder.spring.inventory.dto.request.ItemTypeRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemTypeResponseDto;
 import com.bezkoder.spring.inventory.mapper.ItemTypeMapper;
-import com.bezkoder.spring.inventory.model.Business;
+import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.inventory.model.ItemType;
 import com.bezkoder.spring.inventory.repository.ItemTypeRepository;
 import com.bezkoder.spring.inventory.util.BusinessContextService;
