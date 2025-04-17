@@ -2,10 +2,7 @@ package com.bezkoder.spring.security.jwt.models;
 
 import java.util.List;
 
-import com.bezkoder.spring.inventory.model.Address;
-import com.bezkoder.spring.security.jwt.models.User;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

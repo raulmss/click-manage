@@ -3,7 +3,6 @@ package com.bezkoder.spring.inventory.mapper;
 import com.bezkoder.spring.inventory.dto.request.ItemRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemResponseDto;
 import com.bezkoder.spring.inventory.model.Item;
-import com.bezkoder.spring.security.jwt.mapper.BusinessMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,27 +11,23 @@ import org.springframework.stereotype.Component;
 public class ItemMapper {
 
     private final ItemTypeMapper itemTypeMapper;
-    private final BusinessMapper businessMapper;
 
     public Item itemRequestDtoToItem(ItemRequestDto dto) {
-        if (dto == null) return null;
-
-        Item item = new Item();
-        item.setName(dto.name());
-        item.setDescription(dto.description());
-        item.setType(itemTypeMapper.itemTypeRequestDtoToItemType(dto.itemTypeRequestDto()));
-        return item;
+        return Item.builder()
+                .name(dto.name())
+                .description(dto.description())
+                .barCode(dto.barCode())
+                .type(itemTypeMapper.itemTypeRequestDtoToItemType(dto.type()))
+                .build();
     }
 
     public ItemResponseDto itemToItemResponseDto(Item item) {
-        if (item == null) return null;
-
         return new ItemResponseDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
+                item.getBarCode(),
                 itemTypeMapper.itemTypeToItemTypeResponseDto(item.getType())
         );
     }
-
 }

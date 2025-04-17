@@ -1,4 +1,4 @@
-package com.bezkoder.spring.inventory.model;
+package com.bezkoder.spring.security.jwt.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

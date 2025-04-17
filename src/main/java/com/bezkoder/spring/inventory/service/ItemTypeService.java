@@ -2,16 +2,17 @@ package com.bezkoder.spring.inventory.service;
 
 import com.bezkoder.spring.inventory.dto.request.ItemTypeRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemTypeResponseDto;
+import com.bezkoder.spring.inventory.exception.ItemTypeAlreadyExistsException;
 import com.bezkoder.spring.inventory.mapper.ItemTypeMapper;
-import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.inventory.model.ItemType;
 import com.bezkoder.spring.inventory.repository.ItemTypeRepository;
-import com.bezkoder.spring.inventory.util.BusinessContextService;
+import com.bezkoder.spring.security.jwt.models.Business;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,40 +20,50 @@ public class ItemTypeService {
 
     private final ItemTypeRepository itemTypeRepository;
     private final ItemTypeMapper itemTypeMapper;
-    private final BusinessContextService businessContextService;
 
-    public ItemTypeResponseDto createType(ItemTypeRequestDto dto) {
-        Business business = businessContextService.getCurrentBusiness();
-
-        itemTypeRepository.findByNameAndBusiness(dto.name(), business).ifPresent(existing -> {
-            throw new IllegalStateException("ItemType with name '" + dto.name() + "' already exists for your business.");
-        });
-
-        ItemType itemType = itemTypeMapper.itemTypeRequestDtoToItemType(dto);
-        itemType.setBusiness(business);
-
-        return itemTypeMapper.itemTypeToItemTypeResponseDto(itemTypeRepository.save(itemType));
-    }
-
-    public List<ItemTypeResponseDto> getAllTypes() {
-        Business business = businessContextService.getCurrentBusiness();
-
-        return itemTypeRepository.findByBusiness(business)
-                .stream()
-                .map(itemTypeMapper::itemTypeToItemTypeResponseDto)
-                .toList();
-    }
-
-    public void deleteType(Long id) {
-        Business business = businessContextService.getCurrentBusiness();
-
-        ItemType type = itemTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("ItemType with ID " + id + " not found."));
-
-        if (!type.getBusiness().getId().equals(business.getId())) {
-            throw new SecurityException("You don't own this ItemType.");
+    public ItemTypeResponseDto create(ItemTypeRequestDto dto, Business business) {
+        if (itemTypeRepository.existsByNameIgnoreCaseAndBusiness(dto.name(), business)) {
+            throw new ItemTypeAlreadyExistsException(dto.name());
         }
 
+        ItemType type = itemTypeMapper.itemTypeRequestDtoToItemType(dto);
+        type.setBusiness(business);
+        return itemTypeMapper.itemTypeToItemTypeResponseDto(itemTypeRepository.save(type));
+    }
+
+    public Page<ItemTypeResponseDto> findAllByBusiness(Business business, Pageable pageable) {
+        return itemTypeRepository.findByBusiness(business, pageable)
+                .map(itemTypeMapper::itemTypeToItemTypeResponseDto);
+    }
+
+    public ItemTypeResponseDto findByIdAndBusiness(Long id, Business business) {
+        ItemType type = itemTypeRepository.findByIdAndBusiness(id, business)
+                .orElseThrow(() -> new EntityNotFoundException("Item type not found for this business"));
+        return itemTypeMapper.itemTypeToItemTypeResponseDto(type);
+    }
+
+    public ItemTypeResponseDto update(Long id, ItemTypeRequestDto dto, Business business) {
+        ItemType existing = itemTypeRepository.findByIdAndBusiness(id, business)
+                .orElseThrow(() -> new EntityNotFoundException("Item type not found for this business"));
+        existing.setName(dto.name());
+        existing.setDescription(dto.description());
+        return itemTypeMapper.itemTypeToItemTypeResponseDto(itemTypeRepository.save(existing));
+    }
+
+    public void delete(Long id, Business business) {
+        ItemType type = itemTypeRepository.findByIdAndBusiness(id, business)
+                .orElseThrow(() -> new EntityNotFoundException("Item type not found for this business"));
         itemTypeRepository.delete(type);
     }
+
+    public Page<ItemTypeResponseDto> filterItemTypeByName(Business business, String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return itemTypeRepository.filterItemTypes(business, name, pageable)
+                .map(itemTypeMapper::itemTypeToItemTypeResponseDto);
+    }
+
+    private String normalize(String value) {
+        return (value == null || value.isBlank()) ? null : value;
+    }
+
 }

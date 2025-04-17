@@ -24,7 +24,7 @@ public class AuthController {
     return authService.authenticateUser(loginRequest);
   }
 
-  @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+//  @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
   @PostMapping("/signup-user")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
     return authService.registerUser(signUpRequest);

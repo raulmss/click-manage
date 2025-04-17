@@ -2,7 +2,7 @@ package com.bezkoder.spring.inventory.mapper;
 
 import com.bezkoder.spring.inventory.dto.request.AddressRequestDto;
 import com.bezkoder.spring.inventory.dto.response.AddressResponseDto;
-import com.bezkoder.spring.inventory.model.Address;
+import com.bezkoder.spring.security.jwt.models.Address;
 import org.springframework.stereotype.Component;
 
 @Component

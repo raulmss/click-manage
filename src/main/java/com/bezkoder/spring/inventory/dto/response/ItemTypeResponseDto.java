@@ -6,5 +6,5 @@ public record ItemTypeResponseDto(
         Long id,
         String name,
         String description,
-        BusinessResponseDto businessResponseDto
+        BusinessResponseDto business
 ) {}

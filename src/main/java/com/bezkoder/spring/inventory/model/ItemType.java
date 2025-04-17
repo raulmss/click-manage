@@ -17,6 +17,7 @@ public class ItemType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -24,7 +25,8 @@ public class ItemType {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id", nullable = false)
-    @JsonIgnore // if needed to avoid circular references
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Business business;
 }
-

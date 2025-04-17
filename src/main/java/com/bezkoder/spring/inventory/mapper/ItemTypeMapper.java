@@ -14,22 +14,14 @@ public class ItemTypeMapper {
     private final BusinessMapper businessMapper;
 
     public ItemType itemTypeRequestDtoToItemType(ItemTypeRequestDto dto) {
-        if (dto == null) return null;
-
-        ItemType itemType = new ItemType();
-        itemType.setName(dto.name());
-        itemType.setDescription(dto.description());
-
-        if (dto.businessRequestDto() != null) {
-            itemType.setBusiness(businessMapper.businessRequestDtoToBusiness(dto.businessRequestDto()));
-        }
-
-        return itemType;
+        return ItemType.builder()
+                .name(dto.name())
+                .description(dto.description())
+                .business(businessMapper.businessRequestDtoToBusiness(dto.business()))
+                .build();
     }
 
     public ItemTypeResponseDto itemTypeToItemTypeResponseDto(ItemType itemType) {
-        if (itemType == null) return null;
-
         return new ItemTypeResponseDto(
                 itemType.getId(),
                 itemType.getName(),

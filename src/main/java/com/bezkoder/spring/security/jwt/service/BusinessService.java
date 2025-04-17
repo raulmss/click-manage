@@ -1,7 +1,6 @@
 package com.bezkoder.spring.security.jwt.service;
 
 import com.bezkoder.spring.inventory.mapper.AddressMapper;
-import com.bezkoder.spring.inventory.model.Address;
 import com.bezkoder.spring.security.jwt.mapper.BusinessMapper;
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.security.jwt.payload.request.BusinessFilterDto;

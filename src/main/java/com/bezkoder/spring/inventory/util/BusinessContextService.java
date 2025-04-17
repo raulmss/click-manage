@@ -1,6 +1,6 @@
 package com.bezkoder.spring.inventory.util;
 
-import com.bezkoder.spring.inventory.exception.BusinessNotFoundException;
+import com.bezkoder.spring.security.jwt.exception.BusinessNotFoundException;
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.security.jwt.models.User;
 import com.bezkoder.spring.security.jwt.repository.UserRepository;

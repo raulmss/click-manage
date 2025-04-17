@@ -1,6 +1,5 @@
 package com.bezkoder.spring.inventory.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +20,12 @@ public class Item {
 
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "type_id")
+    @Column(unique = true)
+    private String barCode; // Unique product identifier (optional but useful)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ItemType type;
-    
 }

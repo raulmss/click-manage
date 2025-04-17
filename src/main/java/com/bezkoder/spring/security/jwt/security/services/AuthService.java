@@ -1,7 +1,7 @@
 // Update AuthService.java
 package com.bezkoder.spring.security.jwt.security.services;
 
-import com.bezkoder.spring.inventory.exception.BusinessNotFoundException;
+import com.bezkoder.spring.security.jwt.exception.BusinessNotFoundException;
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.security.jwt.exception.TokenRefreshException;
 import com.bezkoder.spring.security.jwt.models.*;
