@@ -13,9 +13,14 @@ public class GlobalInventoryExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    // Optionally: Add a catch-all for other inventory-related runtime exceptions
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleOtherInventoryExceptions(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An internal inventory error occurred.");
+    @ExceptionHandler(ItemAlreadyExistsException.class)
+    public ResponseEntity<String> handleItemExists(ItemAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
+
+    // Optionally: Add a catch-all for other inventory-related runtime exceptions
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<String> handleOtherInventoryExceptions(RuntimeException ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An internal inventory error occurred.");
+//    }
 }
