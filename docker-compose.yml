@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   mysql:
     image: mysql:8.0
@@ -16,7 +17,8 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   app:
-    build: .
+    image: raulmss/click-manage:1.0.1
+    container_name: click-app
     depends_on:
       - mysql
     environment:
