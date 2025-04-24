@@ -46,11 +46,6 @@ public class BusinessMapper {
                 business.getId(),
                 business.getName(),
                 business.getIndustry(),
-                business.getUsers() != null ?
-                        business.getUsers().stream()
-                                .map(userMapper::userToUserResponseDto)
-                                .collect(Collectors.toList()) :
-                        null,
                 business.getAddress() != null ?
                         addressMapper.addressToAddressResponseDto(business.getAddress()) :
                         null

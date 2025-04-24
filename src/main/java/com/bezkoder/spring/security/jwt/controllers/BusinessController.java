@@ -24,6 +24,7 @@ public class BusinessController {
             @ApiResponse(responseCode = "200", description = "Business created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input or duplicate name")
     })
+
     @PostMapping
     public ResponseEntity<BusinessResponseDto> createBusiness(@RequestBody BusinessRequestDto dto) {
         return ResponseEntity.ok(businessService.createBusiness(dto));

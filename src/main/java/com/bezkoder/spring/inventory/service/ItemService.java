@@ -1,11 +1,14 @@
 package com.bezkoder.spring.inventory.service;
 
 import com.bezkoder.spring.inventory.dto.request.ItemRequestDto;
+import com.bezkoder.spring.inventory.dto.request.StockRequestDto;
 import com.bezkoder.spring.inventory.dto.response.ItemResponseDto;
 import com.bezkoder.spring.inventory.exception.ItemAlreadyExistsException;
 import com.bezkoder.spring.inventory.mapper.ItemMapper;
 import com.bezkoder.spring.inventory.mapper.ItemTypeMapper;
+import com.bezkoder.spring.inventory.mapper.StockMapper;
 import com.bezkoder.spring.inventory.model.Item;
+import com.bezkoder.spring.inventory.model.Stock;
 import com.bezkoder.spring.inventory.repository.ItemRepository;
 import com.bezkoder.spring.inventory.repository.ItemTypeRepository;
 import com.bezkoder.spring.security.jwt.models.Business;
@@ -25,6 +28,8 @@ public class ItemService {
     private final ItemMapper itemMapper;
     private final ItemTypeMapper itemTypeMapper;
     private final ItemTypeRepository itemTypeRepository;
+    private final StockService stockService;
+    private final StockMapper stockMapper;
 
     public ItemResponseDto create(ItemRequestDto dto, Business business) {
         if (itemRepository.existsByBarCodeIgnoreCaseAndType_Business(dto.barCode(), business)) {
@@ -39,7 +44,11 @@ public class ItemService {
         item.setType(itemTypeRepository.findByNameAndBusiness(dto.type().name(), business)
                 .orElseThrow(() -> new EntityNotFoundException("Item type not found")));
         item.getType().setBusiness(business); // ensure type is tied to the business
-        return itemMapper.itemToItemResponseDto(itemRepository.save(item));
+        Item savedItem = itemRepository.save(item);
+
+        // Create stock for the item
+        stockService.createStock(new StockRequestDto(savedItem.getId(), null), business);
+        return itemMapper.itemToItemResponseDto(savedItem);
     }
 
     public Page<ItemResponseDto> findAllByBusiness(Business business, Pageable pageable) {

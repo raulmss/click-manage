@@ -9,7 +9,6 @@ public record BusinessResponseDto(
         Long id,
         String name,
         String industry,
-        List<UserResponseDto> userResponseDtoList,
         AddressResponseDto addressResponseDto
 ) {
 }
