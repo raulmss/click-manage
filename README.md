@@ -1,22 +1,133 @@
-# Spring Security Refresh Token with JWT in Spring Boot example
+# Welcome to Click Manage! 👋🏻
 
 Build JWT Refresh Token with Spring Security in the Spring Boot Application. You can know how to expire the JWT Token, then renew the Access Token with Refresh Token in HttpOnly Cookie.
 
-The instruction can be found at:
-[Spring Security Refresh Token with JWT](https://www.bezkoder.com/spring-security-refresh-token/)
+## 🧾 Click-Manage – Software Requirements
 
-## User Registration, User Login and Authorization process.
-The diagram shows flow of how we implement User Registration, User Login and Authorization process.
+## 📌 Project Scope
+Click-Manage is a multi-tenant inventory and stock management system designed to serve multiple businesses while ensuring strict data isolation. It supports stock tracking, auditability, role-based access, and procurement management.
 
-![spring-security-jwt-auth-spring-boot-flow](spring-security-jwt-auth-spring-boot-flow.png)
 
-And this is for Refresh Token:
+## Documentation
+Once running project, by accessing [Server-Address]/swagger-ui/index.html#/, you can find the API documentation.
+![1 - swagger.png](screenshots/documentation/1%20-%20swagger.png)
 
-![spring-security-refresh-token-jwt-spring-boot-flow](spring-security-refresh-token-jwt-spring-boot-flow.png)
+---
 
+## 🚀 Core Features
+1. **Multi-Business Support**
+    - Each business has isolated data and users.
+    - Super Admin can manage users across businesses.
+
+2. **Role-Based Access Control**
+    - Roles: Super Admin, Admin, Moderator, User
+    - Each role has granular permission over specific operations.
+
+3. **Inventory Management**
+    - CRUD operations for `Item`, `ItemType`, and `Stock`
+    - Unique constraints on item names and barcodes per business
+
+4. **Stock Movement**
+    - **ItemEntry**: Records stock additions (with Supplier, optional expiry/lot)
+    - **ItemExit**: Records stock removal (with optional reason/lot)
+
+5. **Stock Tracking**
+    - `Stock` is a separate entity linked one-to-one with each item
+    - Automatic adjustment on entries and exits
+
+6. **Suppliers**
+    - CRUD operations with unique name/tax ID per business
+    - Linked to item entries for procurement tracking
+
+7. **User Management**
+    - Filter/search by username, email, role, and business
+    - Admins see only their business; Super Admin can access all
+
+8. **Filtering & Pagination**
+    - All listing endpoints support filtering and pagination
+    - Sorting direction and fields are customizable (default: ASC by name)
+
+9. **Validation & Error Handling**
+    - Custom exceptions (e.g., `ItemAlreadyExistsException`, `InsufficientStockException`)
+    - Global exception handler with structured API error responses
+
+---
+
+## 👥 User Stories
+- As an **Admin**, I want to manage items, item types, and suppliers for my business.
+- As a **Moderator**, I want to record new stock entries and exits with all required traceability.
+- As a **Super Admin**, I want to view and manage all users across all businesses.
+- As a **System**, I want to validate inputs and return meaningful error messages.
+- **User** Future usage - Invited to view or perform action in system.
+
+
+## ‍🎨 🖌️ Domain modeling 
+
+### Class Diagrams:
+1. **Security Module: **
+![1 - securityModule.png](screenshots/diagrams/1%20-%20securityModule.png)
+2. **Inventory Module: **
+![2 - inventoryModule.png](screenshots/diagrams/2%20-%20inventoryModule.png)
+
+
+## Tech Stack Explanation
+- **Java 17**: The project uses Java 17 as the base language due to its long-term support (LTS) and improved performance and language features over earlier versions. It provides stability and maturity suitable for enterprise applications. The plan is to upgrade to Java 23 in the future to take advantage of newer enhancements.
+- **Spring Boot**: Spring Boot simplifies backend development by offering robust dependency management, built-in configuration, and an opinionated project structure. It accelerates RESTful API development and seamlessly integrates with Spring Data JPA, Spring Security, and validation frameworks.
+- **MySQL**: MySQL is a reliable and widely adopted relational database system. It offers strong ACID compliance, ease of use, and compatibility with JPA/Hibernate, making it a natural choice for storing structured data like items, users, and stock entries.
+- **Swagger (SpringDoc OpenAPI)**: Swagger is used for automatic API documentation generation, allowing developers and stakeholders to explore and test endpoints via an interactive web interface. It improves usability and helps in API lifecycle management.
+- **Docker**: Docker provides containerization to ensure consistency across development, staging, and production environments. It simplifies deployment by encapsulating the application and its dependencies, making it easy to run on various infrastructures, including cloud platforms.
+- **AWS EC2**: AWS EC2 is used for hosting the application, providing scalable and reliable infrastructure. It allows for easy scaling, load balancing, and integration with other AWS services, ensuring high availability and performance.
+
+## Architecture Design
+ For now, instead of each module having its own database, we are using a single database with multiple schemas. This allows for easier management and deployment, especially in the initial stages of development. However, as the application scales and the number of businesses increases, we will consider moving to a multi-database architecture for better isolation and performance.
+
+![architecture.png](screenshots/architecture/architecture.png)
+
+## ER Diagram
+
+![er_diagram.png](screenshots/er/er_diagram.png)
+
+## DTO Usage & Validation
+
+[Inventory DTO](src/main/java/com/bezkoder/spring/inventory/dto)
+
+[Security DTOs](src/main/java/com/bezkoder/spring/security/jwt/payload)
+
+## Data Persistence
+Inventory Module:
+- [Entities](src/main/java/com/bezkoder/spring/inventory/model)
+- [Repository](src/main/java/com/bezkoder/spring/inventory/repository)
+
+Security Module:
+- [Entities](src/main/java/com/bezkoder/spring/security/jwt/models)
+- [Repositories](src/main/java/com/bezkoder/spring/security/jwt/repository)
+
+## RESTFUL API DESIGN
+
+Inventory Module:
+- [Controller](src/main/java/com/bezkoder/spring/inventory/controller)
+
+Security Module:
+- [Controllers](src/main/java/com/bezkoder/spring/security/jwt/controllers)
+
+## Global Exception Handling
+
+Inventory Module:
+- [Exception Handling](src/main/java/com/bezkoder/spring/inventory/exception)
+
+Secutity Module:
+- [Exception Handling](src/main/java/com/bezkoder/spring/security/jwt/exception)
+
+## Pagination Implementation
+- Found in the Repositories and Services.
+
+## Software Testing
+[TESTS](src/test)
 ## Configure Spring Datasource, JPA, App properties
 Open `src/main/resources/application.properties`
 
+
+## Configure Spring Datasource, JPA, App properties
 ```properties
 spring.datasource.url= jdbc:mysql://localhost:3306/testdb?useSSL=false
 spring.datasource.username= root
@@ -37,166 +148,28 @@ mvn spring-boot:run
 ```
 
 ## Run following SQL insert statements
-```
+### To create the roles used in the system:
+```sql
 INSERT INTO roles(name) VALUES('ROLE_USER');
 INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
 INSERT INTO roles(name) VALUES('ROLE_ADMIN');
+INSERT INTO roles(name) VALUES('ROLE_SUPERADMIN');
 ```
 
-Related Posts:
-> [Spring Boot, Spring Security: JWT Authentication & Authorization example](https://www.bezkoder.com/spring-boot-security-login-jwt/)
+### To create the first superuser of the system:
+login: superadmin_user
+password: rmss1234
+```sql
+-- Insert the user into the users table
+INSERT INTO users (email, password, username, business_id)
+VALUES ('superadmin@example.com', '$2a$10$z4u.bUn8.GivdL/I9.lLy.wP.tSd1Y0oqA8jRj700dlOXuV7yTF7e', 'superadmin_user', 1);
+
+-- Now insert the corresponding role into the user_roles table
+-- First, get the ID of the newly inserted user. For example, assume it returns ID = 5:
+-- You can get the ID using: SELECT LAST_INSERT_ID();
+
+-- Insert role mapping into the user_roles table
+INSERT INTO user_roles (user_id, role_id)
+VALUES (LAST_INSERT_ID(), 4);
+```
 
-> [For MySQL/PostgreSQL](https://www.bezkoder.com/spring-boot-login-example-mysql/)
-
-> [For MongoDB](https://www.bezkoder.com/spring-boot-mongodb-login-example/)
-
-## More Practice:
-> [Spring Boot File upload example with Multipart File](https://bezkoder.com/spring-boot-file-upload/)
-
-> [Exception handling: @RestControllerAdvice example in Spring Boot](https://bezkoder.com/spring-boot-restcontrolleradvice/)
-
-> [Spring Boot Repository Unit Test with @DataJpaTest](https://bezkoder.com/spring-boot-unit-test-jpa-repo-datajpatest/)
-
-> [Spring Boot Rest Controller Unit Test with @WebMvcTest](https://www.bezkoder.com/spring-boot-webmvctest/)
-
-> [Spring Boot Pagination & Sorting example](https://www.bezkoder.com/spring-boot-pagination-sorting-example/)
-
-> Validation: [Spring Boot Validate Request Body](https://www.bezkoder.com/spring-boot-validate-request-body/)
-
-> Documentation: [Spring Boot and Swagger 3 example](https://www.bezkoder.com/spring-boot-swagger-3/)
-
-> Caching: [Spring Boot Redis Cache example](https://www.bezkoder.com/spring-boot-redis-cache-example/)
-
-Associations:
-> [Spring Boot One To Many example with Spring JPA, Hibernate](https://www.bezkoder.com/jpa-one-to-many/)
-
-> [Spring Boot Many To Many example with Spring JPA, Hibernate](https://www.bezkoder.com/jpa-many-to-many/)
-
-> [JPA One To One example with Spring Boot](https://www.bezkoder.com/jpa-one-to-one/)
-
-Deployment:
-> [Deploy Spring Boot App on AWS – Elastic Beanstalk](https://www.bezkoder.com/deploy-spring-boot-aws-eb/)
-
-> [Docker Compose Spring Boot and MySQL example](https://www.bezkoder.com/docker-compose-spring-boot-mysql/)
-
-## Fullstack Authentication
-
-> [Spring Boot + Vue.js JWT Authentication](https://bezkoder.com/spring-boot-vue-js-authentication-jwt-spring-security/)
-
-> [Spring Boot + Angular 8 JWT Authentication](https://bezkoder.com/angular-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 10 JWT Authentication](https://bezkoder.com/angular-10-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 11 JWT Authentication](https://bezkoder.com/angular-11-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 12 JWT Authentication](https://www.bezkoder.com/angular-12-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 13 JWT Authentication](https://www.bezkoder.com/angular-13-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 14 JWT Authentication](https://www.bezkoder.com/angular-14-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 15 JWT Authentication](https://www.bezkoder.com/angular-15-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 16 JWT Authentication](https://www.bezkoder.com/angular-16-spring-boot-jwt-auth/)
-
-> [Spring Boot + Angular 17 JWT Authentication](https://www.bezkoder.com/angular-17-spring-boot-jwt-auth/)
-
-> [Spring Boot + React JWT Authentication](https://bezkoder.com/spring-boot-react-jwt-auth/)
-
-## Fullstack CRUD App
-
-> [Vue.js + Spring Boot + H2 Embedded database example](https://www.bezkoder.com/spring-boot-vue-js-crud-example/)
-
-> [Vue.js + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-vue-js-mysql/)
-
-> [Vue.js + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-vue-js-postgresql/)
-
-> [Angular 8 + Spring Boot + Embedded database example](https://www.bezkoder.com/angular-spring-boot-crud/)
-
-> [Angular 8 + Spring Boot + MySQL example](https://bezkoder.com/angular-spring-boot-crud/)
-
-> [Angular 8 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-spring-boot-postgresql/)
-
-> [Angular 10 + Spring Boot + MySQL example](https://bezkoder.com/angular-10-spring-boot-crud/)
-
-> [Angular 10 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-10-spring-boot-postgresql/)
-
-> [Angular 11 + Spring Boot + MySQL example](https://bezkoder.com/angular-11-spring-boot-crud/)
-
-> [Angular 11 + Spring Boot + PostgreSQL example](https://bezkoder.com/angular-11-spring-boot-postgresql/)
-
-> [Angular 12 + Spring Boot + Embedded database example](https://www.bezkoder.com/angular-12-spring-boot-crud/)
-
-> [Angular 12 + Spring Boot + MySQL example](https://www.bezkoder.com/angular-12-spring-boot-mysql/)
-
-> [Angular 12 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/angular-12-spring-boot-postgresql/)
-
-> [Angular 13 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-13-crud/)
-
-> [Angular 13 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-13-mysql/)
-
-> [Angular 13 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-13-postgresql/)
-
-> [Angular 14 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-14-crud/)
-
-> [Angular 14 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-14-mysql/)
-
-> [Angular 14 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-14-postgresql/)
-
-> [Angular 15 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-15-crud/)
-
-> [Angular 15 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-15-mysql/)
-
-> [Angular 15 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-15-postgresql/)
-
-> [Angular 15 + Spring Boot + MongoDB example](https://www.bezkoder.com/spring-boot-angular-15-mongodb/)
-
-> [Angular 16 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-16-crud/)
-
-> [Angular 16 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-16-mysql/)
-
-> [Angular 16 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-16-postgresql/)
-
-> [Angular 16 + Spring Boot + MongoDB example](https://www.bezkoder.com/spring-boot-angular-16-mongodb/)
-
-> [Angular 17 + Spring Boot + H2 Embedded Database example](https://www.bezkoder.com/spring-boot-angular-17-crud/)
-
-> [Angular 17 + Spring Boot + MySQL example](https://www.bezkoder.com/spring-boot-angular-17-mysql/)
-
-> [Angular 17 + Spring Boot + PostgreSQL example](https://www.bezkoder.com/spring-boot-angular-17-postgresql/)
-
-> [Angular 17 + Spring Boot + MongoDB example](https://www.bezkoder.com/spring-boot-angular-17-mongodb/)
-
-> [React + Spring Boot + MySQL example](https://bezkoder.com/react-spring-boot-crud/)
-
-> [React + Spring Boot + PostgreSQL example](https://bezkoder.com/spring-boot-react-postgresql/)
-
-> [React + Spring Boot + MongoDB example](https://bezkoder.com/react-spring-boot-mongodb/)
-
-Run both Back-end & Front-end in one place:
-> [Integrate Angular with Spring Boot Rest API](https://bezkoder.com/integrate-angular-spring-boot/)
-
-> [Integrate React.js with Spring Boot Rest API](https://bezkoder.com/integrate-reactjs-spring-boot/)
-
-> [Integrate Vue.js with Spring Boot Rest API](https://bezkoder.com/integrate-vue-spring-boot/)
-
-## More Practice:
-> [Spring Boot File upload example with Multipart File](https://bezkoder.com/spring-boot-file-upload/)
-
-> [Exception handling: @RestControllerAdvice example in Spring Boot](https://bezkoder.com/spring-boot-restcontrolleradvice/)
-
-> [Spring Boot Repository Unit Test with @DataJpaTest](https://bezkoder.com/spring-boot-unit-test-jpa-repo-datajpatest/)
-
-> [Spring Boot Pagination & Sorting example](https://www.bezkoder.com/spring-boot-pagination-sorting-example/)
-
-Associations:
-> [JPA/Hibernate One To Many example](https://www.bezkoder.com/jpa-one-to-many/)
-
-> [JPA/Hibernate Many To Many example](https://www.bezkoder.com/jpa-many-to-many/)
-
-> [JPA/Hibernate One To One example](https://www.bezkoder.com/jpa-one-to-one/)
-
-Deployment:
-> [Deploy Spring Boot App on AWS – Elastic Beanstalk](https://www.bezkoder.com/deploy-spring-boot-aws-eb/)
-
-> [Docker Compose Spring Boot and MySQL example](https://www.bezkoder.com/docker-compose-spring-boot-mysql/)
