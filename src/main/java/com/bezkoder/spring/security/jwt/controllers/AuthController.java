@@ -24,19 +24,19 @@ public class AuthController {
     return authService.authenticateUser(loginRequest);
   }
 
-//  @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or hasRole('SUPERADMIN')")
   @PostMapping("/signup-user")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
     return authService.registerUser(signUpRequest);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('SUPERADMIN')")
   @PostMapping("/signup-moderator")
   public ResponseEntity<?> registerModerator(@Valid @RequestBody SignupRequest signUpRequest) {
     return authService.registerModerator(signUpRequest);
   }
 
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') or hasRole('SUPERADMIN')")
   @PostMapping("/signup-admin")
   public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
     return authService.registerAdmin(signUpRequest);

@@ -70,18 +70,6 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
-//  @Override
-//  protected void configure(HttpSecurity http) throws Exception {
-//    http.cors().and().csrf().disable()
-//        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-//        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-//        .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-//        .antMatchers("/api/test/**").permitAll()
-//        .anyRequest().authenticated();
-//
-//    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//  }
-
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
@@ -93,10 +81,16 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                           "/swagger-ui/**",   // Swagger UI
                           "/swagger-ui.html"  // Legacy Swagger UI path
                   ).permitAll()
-                  .anyRequest().permitAll()
-//              .requestMatchers("/api/auth/**").permitAll()
-//              .requestMatchers("/api/test/**").permitAll()
-//              .anyRequest().authenticated()
+                  .requestMatchers("/api/businesses/**").hasAnyRole( "SUPERADMIN")
+                  .requestMatchers("/api/items/**").hasAnyRole("SUPERADMIN", "ADMIN")
+                  .requestMatchers("/api/item-types/**").hasAnyRole("SUPERADMIN", "ADMIN")
+                  .requestMatchers("/api/suppliers/**").hasAnyRole("SUPERADMIN", "ADMIN")
+                  .requestMatchers("/api/item-entries/**").hasAnyRole("SUPERADMIN", "ADMIN", "MODERATOR")
+                  .requestMatchers("/api/item-exits/**").hasAnyRole("SUPERADMIN", "ADMIN", "MODERATOR")
+                  .requestMatchers("/api/stocks/**").hasAnyRole("SUPERADMIN", "ADMIN", "MODERATOR")
+                  .requestMatchers("/api/users/**").hasAnyRole("SUPERADMIN", "ADMIN")
+                  .requestMatchers("/api/auth/signin").permitAll()
+              .anyRequest().authenticated()
         );
         
     http.authenticationProvider(authenticationProvider());
