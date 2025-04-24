@@ -1,6 +1,7 @@
 package com.bezkoder.spring.security.jwt.mapper;
 
 
+import com.bezkoder.spring.inventory.dto.response.UserSummaryDto;
 import com.bezkoder.spring.security.jwt.models.Business;
 import com.bezkoder.spring.security.jwt.models.Role;
 import com.bezkoder.spring.security.jwt.models.User;
@@ -52,5 +53,10 @@ public class UserMapper {
                 user.getEmail(),
                 roleDtos
         );
+    }
+
+    public UserSummaryDto userToUserSummaryDto(User user) {
+        if (user == null) return null;
+        return new UserSummaryDto(user.getId(), user.getUsername(), user.getEmail());
     }
 }
