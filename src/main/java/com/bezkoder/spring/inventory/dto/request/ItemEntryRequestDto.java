@@ -2,6 +2,7 @@ package com.bezkoder.spring.inventory.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
@@ -17,6 +18,7 @@ public record ItemEntryRequestDto(
         int quantity,
 
         // Optional, but you can limit size if desired
+        @Size(max = 50, message = "Lot number must be less than 50 characters.")
         String lotNumber,
 
         // Optional field

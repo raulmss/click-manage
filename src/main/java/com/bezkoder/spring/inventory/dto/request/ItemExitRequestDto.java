@@ -13,6 +13,7 @@ public record ItemExitRequestDto(
         int quantity,
 
         // Optional, but you can add size constraints if needed
+        @Size(max = 50, message = "Lot number must be at most 50 characters.")
         String lotNumber,
 
         @Size(max = 255, message = "Reason must be at most 255 characters.")

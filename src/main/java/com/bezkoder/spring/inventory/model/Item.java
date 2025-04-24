@@ -15,12 +15,13 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(length = 255)
     private String description;
 
-    @Column(unique = true)
+    @Column(unique = true, length = 50)
     private String barCode; // Unique product identifier (optional but useful)
 
     @ManyToOne(fetch = FetchType.LAZY)

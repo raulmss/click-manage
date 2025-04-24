@@ -19,19 +19,23 @@ public class Supplier {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(length = 100)
     private String email;
 
+    @Column(length = 20)
     private String phone;
 
+    @Column(length = 20)
     private String taxId; //in Brazil, known as CNPJ
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @Column(length = 100)
     private String contactPerson;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

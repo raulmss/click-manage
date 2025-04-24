@@ -26,8 +26,10 @@ public class ItemExit {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(length = 50)
     private String lotNumber;
 
+    @Column(length = 255)
     private String reason;
 
     @Column(nullable = false, updatable = false)

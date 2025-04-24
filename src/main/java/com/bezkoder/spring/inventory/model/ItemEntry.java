@@ -35,6 +35,7 @@ public class ItemEntry {
 
     private LocalDate expiryDate;
 
+    @Column(length = 50)
     private String lotNumber;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
