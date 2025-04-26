@@ -117,6 +117,7 @@ Inventory Module:
 Security Module:
 - [Controllers](src/main/java/com/bezkoder/spring/security/jwt/controllers)
 
+
 ## Global Exception Handling
 
 Inventory Module:
@@ -127,6 +128,12 @@ Secutity Module:
 
 ## Pagination Implementation
 - Found in the Repositories and Services.
+
+## Deployment/Docker:
+- [Dockerfile](Dockerfile)
+- [docker-compose.yml](docker-compose.yml)
+- Deployed on EC2 instance:
+![2 - EC2 instance.png](screenshots/documentation/2%20-%20EC2%20instance.png)
 
 ## Software Testing
 [TESTS](src/test)
