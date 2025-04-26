@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: 'mysql:latest' #This specifies the Docker image to use for the MySQL service.
+    environment:
+      - 'MYSQL_DATABASE=click-manager'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - '3307:3306'
+    healthcheck: #Ensures that the MySQL service is fully ready before the web service starts
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s #The health check runs every 10 seconds.
+      timeout: 5s #Each health check must complete within 5 seconds.
+      retries: 3 #Docker will retry the health check 3 times before marking the service as unhealthy.
+      start_period: 10s #This is a delay (10 seconds) after container startup before Docker begins checking the service health, giving MySQL some time to initialize.
+
+
+  web:
+    image: raulmss/click-manager:1.0.1
+#    build:
+#      dockerfile: Dockerfile
+    container_name: click-manage-spring-back-web-1
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        # Waits for the service to pass its health checks, ensuring it is fully operational.
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/click-manager
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: secret
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
