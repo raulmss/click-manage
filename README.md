@@ -7,7 +7,14 @@ Build JWT Refresh Token with Spring Security in the Spring Boot Application. You
 ## 📌 Project Scope
 Click-Manage is a multi-tenant inventory and stock management system designed to serve multiple businesses while ensuring strict data isolation. It supports stock tracking, auditability, role-based access, and procurement management.
 
-
+## To use the deployed version of the project:
+1. **Backend - enpoints found at:**: http://captain.raulsouto.com:8080
+   - username: rmss
+   - password: rmss1234
+- OBS: No need to set up tokens. Tokens are managed via cookies when using postman.
+3. **Documentation**: [Click-Manage Documentation](http://captain.raulsouto.com:8080/swagger-ui/index.html#/)
+ 
+## Last section shows workflow to be followed once using this application.
 ## Documentation
 Once running project, by accessing [Server-Address]/swagger-ui/index.html#/, you can find the API documentation.
 ![1 - swagger.png](screenshots/documentation/1%20-%20swagger.png)
@@ -160,6 +167,14 @@ INSERT INTO roles(name) VALUES('ROLE_SUPERADMIN');
 login: superadmin_user
 password: rmss1234
 ```sql
+-- Create address for the business
+INSERT INTO address (id, city, country, postal_code, state, street)
+VALUES (1, 'Fairfield', 'USA', '52557', 'IA', '1000 N 4th St');
+
+-- Create Business
+INSERT INTO businesses (id, industry, name, address_id)
+VALUES (1, 'The Owner', 'All Knowing.', 1);
+
 -- Insert the user into the users table
 INSERT INTO users (email, password, username, business_id)
 VALUES ('superadmin@example.com', '$2a$10$z4u.bUn8.GivdL/I9.lLy.wP.tSd1Y0oqA8jRj700dlOXuV7yTF7e', 'superadmin_user', 1);
@@ -173,3 +188,90 @@ INSERT INTO user_roles (user_id, role_id)
 VALUES (LAST_INSERT_ID(), 4);
 ```
 
+## Mainflow of the application
+- When running:
+   - {{ec2Address}}: http://captain.raulsouto.com:8080.
+   - If running locally, use localhost:8080.
+1. **Login**:
+- Endpoint: POST `/api/auth/signin`
+```json
+{
+  "username": "rmss",
+  "password": "rmss1234"
+}
+```
+![1 - Login.png](screenshots/workflow/1%20-%20Login.png)
+2. **Create Item Type**:
+- Endpoint: POST `/api/item-types`
+```json
+{
+   "name": "Food",
+   "description": "Eatable items."
+}
+```
+![2 - Create Item Type.png](screenshots/workflow/2%20-%20Create%20Item%20Type.png)
+3. **Create Item**:
+-Endpoint: POST `/api/items`
+```json
+{
+   "name": "Milkshake",
+   "description": "Drink made with Icecream",
+   "barCode": "ASDQWEASD",
+   "type": {
+      "name": "Food"
+   }
+}
+```
+![3 - Create Item.png](screenshots/workflow/3%20-%20Create%20Item.png)
+4. **Create Supplier**:
+- Endpoint: POST `/api/suppliers`
+```json
+{
+   "name": "Supplier 1",
+   "taxId": "123456789",
+   "address": {
+      "city": "Fairfield",
+      "country": "USA",
+      "postalCode": "52557",
+      "state": "IA",
+      "street": "1000 N 4th St"
+   }
+}
+```
+![4 - Create Supplier.png](screenshots/workflow/4%20-%20Create%20Supplier.png)
+5. **Create Item Entry**:
+- Endpoint: POST `/api/item-entries`
+```json
+{
+   "itemId": 2,
+   "supplierId": 2,
+   "quantity": 50,
+   "lotNumber": "LOT-202500Q7-Z"
+   //  "expiryDate": "2025-12-31"
+}
+```
+![5 - Create Item Entry.png](screenshots/workflow/5%20-%20Create%20Item%20Entry.png)
+6. **Create Item Exit**:
+- Endpoint: GET `/api/item-exits`
+```json
+{
+   "itemId": 2,
+   "quantity": 13,
+   "lotNumber": "ABC123XQWE",
+   "reason": "Sold items"
+}
+```
+![6 - Create Item Exit.png](screenshots/workflow/6%20-%20Create%20Item%20Exit.png)
+7. **Check all Item Stock**:
+- Endpoint: `/api/stocks`
+Request params:
+```json
+{
+   "page": 0,
+   "size": 10,
+   "itemName": "Milkshake",
+   "itemTypeName": "Food",
+   "sortDirection": "id,asc"
+}
+```
+![7 - Check all stock levels.png](screenshots/workflow/7%20-%20Check%20all%20stock%20levels.png)
