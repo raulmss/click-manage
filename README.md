@@ -282,3 +282,5 @@ Request params:
 }
 ```
 ![7 - Check all stock levels.png](screenshots/workflow/7%20-%20Check%20all%20stock%20levels.png)
+
+Enjoy!
